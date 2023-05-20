@@ -1,0 +1,123 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700');
+*
+{
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body
+{
+    font-family: 'Roboto', sans-serif;
+    background-color: #F5F5F5;
+}
+a
+{
+    text-decoration: none;
+}
+.bloc_left_price {
+    color: #c01508;
+    text-align: center;
+    font-weight: bold;
+    font-size: 150%;
+}
+.category_block li:hover {
+    background-color: #007bff;
+}
+.category_block li:hover a {
+    color: #ffffff;
+}
+.category_block li a {
+    color: #343a40;
+}
+.add_to_cart_block .price {
+    color: #c01508;
+    text-align: center;
+    font-weight: bold;
+    font-size: 200%;
+    margin-bottom: 0;
+}
+.add_to_cart_block .price_discounted {
+    color: #343a40;
+    text-align: center;
+    text-decoration: line-through;
+    font-size: 140%;
+}
+.product_rassurance {
+    padding: 10px;
+    margin-top: 15px;
+    background: #ffffff;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+}
+.product_rassurance .list-inline {
+    margin-bottom: 0;
+    text-transform: uppercase;
+    text-align: center;
+}
+.product_rassurance .list-inline li:hover {
+    color: #343a40;
+}
+.reviews_product .fa-star {
+    color: gold;
+}
+.pagination {
+    margin-top: 20px;
+}
+footer {
+    background: #343a40;
+    padding: 40px;
+}
+footer a {
+    color: #f8f9fa!important
+}
+
+.navbar-expand-md .navbar-collapse{
+    flex-direction: column;
+}
+
+.searchfield{
+	width: 750px !important;
+    height: 40px;
+    margin: 10px;
+}
+.btn-search{
+	width: 45px;
+}
+
+/* dropdown when click user */
+.user-name{
+	position: relative;
+}
+
+.user-dropdown{
+	position: absolute;
+	z-index: 10;
+	background-color: #FFFFFF;
+	border: 1px solid #DFDFDF;
+    border-radius: 3px;	
+	left: -60px;
+	display: none;
+}
+
+.user-name:hover .user-dropdown{
+	display: block;
+}
+.user-dropdown::before{
+	content: "";
+    border-width: 10px 15px;
+    border-style: solid;
+    border-color: transparent transparent #FFFFFF transparent;
+    position: absolute;
+    right: 8px;
+    top: -20px;
+}
+.user-dropdown__item{
+	padding: 10px;
+}
+.user-dropdown__item:hover {
+	background-color: #F5F5F5;
+}
+
