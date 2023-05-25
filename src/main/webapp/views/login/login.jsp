@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
 <title>Đăng nhập</title>
 <link rel='stylesheet' href="/css/login/login.css">
@@ -64,6 +65,12 @@
       </div><!--.tabs-content-->
     </div><!--.form-wrap-->
      <script type="text/javascript">
+     if(top.location!=self.location) {
+ 	    parent.location = self.location;
+
+ 	}
+
+     
      var close = document.getElementsByClassName("closebtn");
      var i;
 
@@ -81,6 +88,9 @@
  		 $('div[id$="tab-content"]').removeClass('active');
  		 $("#signup-tab-content").addClass('active');
      }
+     
+     
+
      
      </script>
 </body>
