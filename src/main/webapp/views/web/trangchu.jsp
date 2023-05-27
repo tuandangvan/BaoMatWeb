@@ -7,7 +7,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="X-Frame-Options" content="deny">
+<!-- <meta http-equiv="X-Frame-Options" content="deny"> -->
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self';">
 <title>LTWEB</title>
 <link rel='stylesheet' href="/css/web/product.css">
 </head>
@@ -60,6 +61,9 @@
 </body>
 
 <script type="text/javascript">
-
+	if(top.location!=self.location) {
+	  parent.location = self.location;
+	
+	}
 	</script>
 </html>

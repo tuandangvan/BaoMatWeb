@@ -6,6 +6,7 @@
 <head>
 
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self';">
 <title>Đăng nhập</title>
 <link rel='stylesheet' href="/css/login/login.css">
 <link rel='stylesheet' href="/css/alertMessage.css">
@@ -65,6 +66,8 @@
       </div><!--.tabs-content-->
     </div><!--.form-wrap-->
      <script type="text/javascript">
+     
+     
      if(top.location!=self.location) {
  	    parent.location = self.location;
 

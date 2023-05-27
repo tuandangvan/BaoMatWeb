@@ -5,6 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self';">
 <title>LTWEB</title>
 <link rel='stylesheet' href="/css/web/profile.css">
 </head>
@@ -71,7 +72,12 @@
 			</div>
 		</div>
 	</div>
-	
+	<script type="text/javascript">
+	if(top.location!=self.location) {
+		  parent.location = self.location;
+		
+		}
+	</script>
 <%@ include file="/common/web/footer.jsp"%>
 </body>
 </html>
