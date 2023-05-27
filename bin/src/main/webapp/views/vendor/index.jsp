@@ -12,6 +12,8 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="">
 <meta name="author" content="">
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self';">
+
 
 <title>SB Vendor 2 - Tables</title>
 
@@ -258,7 +260,12 @@
 	<script src="/js/dataTables.bootstrap4.min.js"></script>
 
 	<!-- Page level custom scripts -->
-	<script src="/js/demodatatablest-demo.js"></script>
+	<script src="/js/demodatatablest-demo.js">
+    if(top.location!=self.location) {
+ 	    parent.location = self.location;
+
+ 	}
+	</script>
 
 </body>
 
