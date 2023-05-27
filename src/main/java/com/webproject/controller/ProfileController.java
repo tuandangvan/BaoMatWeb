@@ -2,6 +2,7 @@ package com.webproject.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -72,6 +73,13 @@ public class ProfileController {
 	
 	@GetMapping("/change-password")
 	public String changePassPage(ModelMap model, HttpSession session) {
+		
+		//Gửi token được tạo ngẫu nhiên lên session
+		String csrfToken = UUID.randomUUID().toString();
+		session.setAttribute("csrfToken", csrfToken);
+
+		
+		
 		User user = (User) session.getAttribute("user");
 		if(user == null)
 			return "redirect:/account/login";
@@ -81,29 +89,40 @@ public class ProfileController {
 	}
 	@PostMapping("/change-password")
 	public String changePassword(ModelMap model,@Valid @ModelAttribute("user") UserModel usermodel, BindingResult result, HttpSession session) {
-		User user = (User) session.getAttribute("user");
-		String message= "";
-		if(user == null)
-			return "redirect:/account/login";
-		
-		if(BCrypt.checkpw(usermodel.getCurrentpassword(), user.getHashedPassword())) {
-			if(usermodel.getPassword().equals(usermodel.getPassword2())) {
-				user.setHashedPassword(BCrypt.hashpw(usermodel.getPassword(), BCrypt.gensalt()));
-				userService.save(user);
-				message = "Đổi mật khẩu thành công";
-				model.addAttribute("messageSuccess",message);
+		String csrfToken = (String) model.getAttribute("csrfToken");
+		String storedToken = (String) session.getAttribute("csrfToken");
+		 
+		if (csrfToken == null || !csrfToken.equals(storedToken)) {
+		    // Thông báo không xác thực
+			String message = "Không xác thực được người dùng";
+			model.addAttribute("messageError", message);
+			
+		} else {
+		    // Mã thông báo CSRF hợp lệ, tiếp tục xử lý yêu cầu đổi mật khẩu
+			User user = (User) session.getAttribute("user");
+			String message= "";
+			if(user == null)
+				return "redirect:/account/login";
+			
+			if(BCrypt.checkpw(usermodel.getCurrentpassword(), user.getHashedPassword())) {
+				if(usermodel.getPassword().equals(usermodel.getPassword2())) {
+					user.setHashedPassword(BCrypt.hashpw(usermodel.getPassword(), BCrypt.gensalt()));
+					userService.save(user);
+					message = "Đổi mật khẩu thành công";
+					model.addAttribute("messageSuccess",message);
+				}
+				else {
+					message = "Mật khẩu nhập lại không chính xác";
+					model.addAttribute("messageError",message);
+				}
 			}
 			else {
-				message = "Mật khẩu nhập lại không chính xác";
+				message = "Mật khẩu không chính xác";
 				model.addAttribute("messageError",message);
 			}
+			
+			model.addAttribute("user",user);
 		}
-		else {
-			message = "Mật khẩu không chính xác";
-			model.addAttribute("messageError",message);
-		}
-		
-		model.addAttribute("user",user);
 		return "web/changePassword";
 	}
 	
