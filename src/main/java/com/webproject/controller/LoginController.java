@@ -32,7 +32,8 @@ public class LoginController {
 	UserService userService;
 	
 	@GetMapping("login")
-	public String loginPage(ModelMap model) {
+	public String loginPage(ModelMap model, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "DENY");
 		UserModel user = new UserModel();
 		model.addAttribute("user", user);
 		model.addAttribute("action", "login");
@@ -41,6 +42,7 @@ public class LoginController {
 	@PostMapping("login")
 	public ModelAndView login(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result, HttpSession session, HttpServletResponse response) throws JSONException
 	{	
+		response.setHeader("X-Frame-Options", "DENY");
 		String message = "";
 		if(result.hasErrors()) {	
 			return new ModelAndView("login/login");
@@ -85,14 +87,16 @@ public class LoginController {
 	}
 	
 	@GetMapping("signup")
-	public String signUpPage(ModelMap model) {
+	public String signUpPage(ModelMap model, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "DENY");
 		UserModel user = new UserModel();
 		model.addAttribute("user", user);
 		model.addAttribute("action", "signup");
 		return "login/login";
 	}
 	@PostMapping("signup")
-	public ModelAndView signUp(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result) {
+	public ModelAndView signUp(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "DENY");
 		String message="";
 		
 		user.setEmail(user.getEmail().trim());
@@ -139,8 +143,11 @@ public class LoginController {
 	}
 	
 	@GetMapping("logout")
-	public String logout(ModelMap model, HttpSession session) {
+	public String logout(ModelMap model, HttpSession session, HttpServletResponse response) {
 		session.invalidate();
+		Cookie cookie = new Cookie("cookieName", "");
+		cookie.setMaxAge(0);
+		response.addCookie(cookie);
 		return "redirect:/account/login";
 	}
 	

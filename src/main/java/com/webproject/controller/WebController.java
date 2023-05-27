@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -21,16 +22,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.webproject.entity.Category;
 import com.webproject.entity.Product;
 import com.webproject.entity.Store;
 import com.webproject.entity.User;
-import com.webproject.service.CartItemService;
-import com.webproject.service.CartService;
+
 import com.webproject.service.CategoryService;
 import com.webproject.service.ProductService;
 import com.webproject.service.StorageService;
@@ -38,7 +36,7 @@ import com.webproject.service.StoreService;
 
 @Controller
 @RequestMapping("")
-public class WebController {
+public class WebController{
 	@Autowired
 	private StoreService storeService;
 	
@@ -60,7 +58,9 @@ public class WebController {
 				.body(file);
 	}
 	@GetMapping("")
-	public String homePage(ModelMap model, HttpSession session) {
+	public String homePage(ModelMap model, HttpSession session, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "DENY");
+
 		User user = (User) session.getAttribute("user");
 		List<Product> list = productService.findLastestProduct();
 		
@@ -70,7 +70,8 @@ public class WebController {
 	}
 	
 	@GetMapping("category-list")
-	public String categoryPage(ModelMap model, HttpSession session) {
+	public String categoryPage(ModelMap model, HttpSession session, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "DENY");
 		//User user = (User) session.getAttribute("user");
 		List<Category> categories = cateService.findAll();
 		model.addAttribute("categories", categories);
@@ -79,7 +80,8 @@ public class WebController {
 	}
 	
 	@GetMapping("category-list/{categoryslug}")
-	public String productByCate(ModelMap model,@PathVariable String categoryslug, HttpSession session) {
+	public String productByCate(ModelMap model,@PathVariable String categoryslug, HttpSession session, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "DENY");
 		Category cate = cateService.findBySlug(categoryslug);
 		List<Product> list = productService.findAllByCategoryId(cate.get_id());
 		model.addAttribute("cate",cate);
@@ -89,7 +91,8 @@ public class WebController {
 	}
 	
 	@GetMapping("store/{id}")
-	public String getMethodName(Model model, @PathVariable Long id) {
+	public String getMethodName(Model model, @PathVariable Long id, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "DENY");
 		Optional<Store> opt = storeService.findById(id);
 		List<Product> list = productService.findAllByStoreId(opt.get().get_id());
 		model.addAttribute("store", opt.get());
@@ -98,7 +101,8 @@ public class WebController {
 	}
 	
 	@PostMapping("search")
-	public String search(Model model, HttpServletRequest req) {
+	public String search(Model model, HttpServletRequest req, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "DENY");
 		String searchKey = req.getParameter("search-key");
 		String option = req.getParameter("option");
 		
@@ -121,7 +125,8 @@ public class WebController {
 	}
 	
 	@GetMapping("/product/{id}")
-	public String productDetail(ModelMap model,@PathVariable Long id, HttpSession session) {
+	public String productDetail(ModelMap model,@PathVariable Long id, HttpSession session, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "DENY");
 		User user = (User) session.getAttribute("user");
 		Product product = productService.findById(id).get();
 		

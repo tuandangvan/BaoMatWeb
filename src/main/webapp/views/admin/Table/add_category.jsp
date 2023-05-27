@@ -5,7 +5,6 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self';">
 <title>SUNNY | Trang quản trị</title>
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
