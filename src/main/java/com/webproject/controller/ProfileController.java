@@ -50,8 +50,9 @@ public class ProfileController {
 		User user = (User) session.getAttribute("user");
 		if(user == null)
 			return "redirect:/account/login";
+		User entity = userService.findByEmail(user.getEmail());
 		
-		model.addAttribute("user",user);
+		model.addAttribute("user",entity);
 		return "web/editProfile";
 	}
 	
@@ -60,14 +61,15 @@ public class ProfileController {
 		User user = (User) session.getAttribute("user");
 		if(user == null)
 			return "redirect:/account/login";
-		user.setFirstName(usermodel.getFirstName());
-		user.setLastName(usermodel.getLastName());
-		user.setIdCard(usermodel.getIdCard());
-		user.setPhone(usermodel.getPhone());
-		user.setAddress(usermodel.getAddress());
-		userService.save(user);
+		User entity = userService.findByEmail(user.getEmail());
+		entity.setFirstName(usermodel.getFirstName());
+		entity.setLastName(usermodel.getLastName());
+		entity.setIdCard(usermodel.getIdCard());
+		entity.setPhone(usermodel.getPhone());
+		entity.setAddress(usermodel.getAddress());
+		userService.save(entity);
 		
-		model.addAttribute("user",user);
+		model.addAttribute("user",entity);
 		return "web/editProfile";
 	}
 	
