@@ -1,16 +1,16 @@
 package com.webproject.controller;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import java.lang.reflect.Field;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-
 
 import com.webproject.entity.User;
 import com.webproject.model.UserModel;
@@ -45,6 +44,11 @@ public class LoginController {
 		response.setHeader("X-Frame-Options", "DENY");
 		String message = "";
 		if(result.hasErrors()) {	
+			return new ModelAndView("login/login");
+		}
+		
+		if(user.getEmail() == null || user.getPassword() == null) {
+			model.addAttribute("messageError", "input không hợp lệ");
 			return new ModelAndView("login/login");
 		}
 		user.setEmail(user.getEmail().trim());
@@ -96,6 +100,22 @@ public class LoginController {
 	}
 	@PostMapping("signup")
 	public ModelAndView signUp(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result, HttpServletResponse response) {
+		Field[] fields = user.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                Object object = field.get(user);
+                if(object == null)
+                {
+                	model.addAttribute("messageError", "input không hợp lệ");
+            		model.addAttribute("action", "signup");	
+                	return new ModelAndView("login/login");
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+		
 		response.setHeader("X-Frame-Options", "DENY");
 		String message="";
 		

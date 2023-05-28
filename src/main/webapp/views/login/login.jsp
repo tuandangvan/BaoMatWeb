@@ -65,7 +65,7 @@
         
       </div><!--.tabs-content-->
     </div><!--.form-wrap-->
-     <script type="text/javascript">
+     <script type="text/javascript" nonce="jquery">
      
      
      if(top.location!=self.location) {
