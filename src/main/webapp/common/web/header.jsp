@@ -4,6 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'nonce-jquery' 'self' https://ajax.googleapis.com;">
 <title>Insert title here</title>
 
  <!-- CSS -->
