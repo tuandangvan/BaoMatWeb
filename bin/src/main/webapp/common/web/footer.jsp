@@ -22,9 +22,9 @@
 	                <h5>Thực hiện bởi</h5>
 	                <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
 	                <ul class="list-unstyled">
-	                    <li><a href="">Huỳnh Tấn Khôi</a></li>
-	                    <li><a href="">Lý Thế Luân</a></li>
-	                    <li><a href="">Nguyễn Công Phát</a></li>
+	                    <li>Huỳnh Tấn Khôi</a></li>
+	                    <li>Lý Thế Luân</a></li>
+	                    <li>Nguyễn Công Phát</a></li>
 	                    
 	                </ul>
 	            </div>

@@ -72,7 +72,7 @@ public class WebController{
 	@GetMapping("category-list")
 	public String categoryPage(ModelMap model, HttpSession session, HttpServletResponse response) {
 		response.setHeader("X-Frame-Options", "DENY");
-		//User user = (User) session.getAttribute("user");
+		User user = (User) session.getAttribute("user");
 		List<Category> categories = cateService.findAll();
 		model.addAttribute("categories", categories);
 		model.addAttribute("page", "category");
@@ -80,8 +80,7 @@ public class WebController{
 	}
 	
 	@GetMapping("category-list/{categoryslug}")
-	public String productByCate(ModelMap model,@PathVariable String categoryslug, HttpSession session, HttpServletResponse response) {
-		response.setHeader("X-Frame-Options", "DENY");
+	public String productByCate(ModelMap model,@PathVariable String categoryslug, HttpSession session) {
 		Category cate = cateService.findBySlug(categoryslug);
 		List<Product> list = productService.findAllByCategoryId(cate.get_id());
 		model.addAttribute("cate",cate);

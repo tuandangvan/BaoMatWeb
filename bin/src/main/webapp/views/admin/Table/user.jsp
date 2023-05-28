@@ -5,6 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self';">
 <title>SUNNY | Trang quản trị</title>
 
 
@@ -122,7 +123,10 @@
 
 				<!-- script for action in page -->
 				<script src="/views/admin/js/page.js">
-					>
+				if(top.location!=self.location) {
+					  parent.location = self.location;
+					
+					}
 				</script>
 </body>
 </html>

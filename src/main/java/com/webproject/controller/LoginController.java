@@ -108,10 +108,12 @@ public class LoginController {
 		user.setPassword2(user.getPassword2().trim());
 		user.setRoles("user");
 		
+		String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+		
 		if(!validatePassword(user.getPassword()).equals("")) {
 			message = validatePassword(user.getPassword());
 		}
-		else if(!user.getPassword().equals(user.getPassword2())) {
+		else if(!BCrypt.checkpw(user.getPassword2(), hashedPassword)) {
 			System.err.println(!user.getPassword().toString().equals(user.getPassword2().toString()));
 			message = "mật khẩu nhập lại không chính xác";
 		}
