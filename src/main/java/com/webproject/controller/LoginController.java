@@ -108,7 +108,10 @@ public class LoginController {
 		user.setPassword2(user.getPassword2().trim());
 		user.setRoles("user");
 		
-		if(!user.getPassword().equals(user.getPassword2())) {
+		if(!validatePassword(user.getPassword()).equals("")) {
+			message = validatePassword(user.getPassword());
+		}
+		else if(!user.getPassword().equals(user.getPassword2())) {
 			System.err.println(!user.getPassword().toString().equals(user.getPassword2().toString()));
 			message = "mật khẩu nhập lại không chính xác";
 		}
@@ -149,6 +152,42 @@ public class LoginController {
 		cookie.setMaxAge(0);
 		response.addCookie(cookie);
 		return "redirect:/account/login";
+	}
+	
+	public String validatePassword(String password) {
+	    String message = "";
+
+	    // Kiểm tra độ dài mật khẩu
+	    if (password.length() < 8) {
+	        message += "Mật khẩu phải có ít nhất 8 kí tự.\n";
+	    }
+
+	    // Kiểm tra chữ hoa
+	    if (!password.matches(".*[A-Z].*")) {
+	        message += "Mật khẩu phải chứa ít nhất một chữ hoa.\n";
+	    }
+
+	    // Kiểm tra chữ thường
+	    if (!password.matches(".*[a-z].*")) {
+	        message += "Mật khẩu phải chứa ít nhất một chữ thường.\n";
+	    }
+
+	    // Kiểm tra số
+	    if (!password.matches(".*\\d.*")) {
+	        message += "Mật khẩu phải chứa ít nhất một số.\n";
+	    }
+
+	    // Kiểm tra kí tự đặc biệt
+	    if (!password.matches(".*[@#$%^&+=].*")) {
+	        message += "Mật khẩu phải chứa ít nhất một kí tự đặc biệt (@, #, $, %, ^, &, +, =).\n";
+	    }
+
+	    // Kiểm tra thông báo
+	    if (message.isEmpty()) {
+	        message = "Mật khẩu hợp lệ.";
+	    }
+
+	    return message;
 	}
 	
 }
