@@ -5,7 +5,6 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self';">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.2/css/bootstrap.min.css" />
 <title>Chỉnh sửa cửa hàng</title>

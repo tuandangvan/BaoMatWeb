@@ -16,7 +16,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http
-        		.csrf().disable()
+        		.csrf().disable();
+        http
+        		.csrf();
+        http
         		
                 .headers()
                 .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.SAME_ORIGIN).and()

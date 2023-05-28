@@ -32,7 +32,8 @@ public class LoginController {
 	UserService userService;
 	
 	@GetMapping("login")
-	public String loginPage(ModelMap model) {
+	public String loginPage(ModelMap model, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "DENY");
 		UserModel user = new UserModel();
 		model.addAttribute("user", user);
 		model.addAttribute("action", "login");
@@ -41,6 +42,7 @@ public class LoginController {
 	@PostMapping("login")
 	public ModelAndView login(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result, HttpSession session, HttpServletResponse response) throws JSONException
 	{	
+		response.setHeader("X-Frame-Options", "DENY");
 		String message = "";
 		if(result.hasErrors()) {	
 			return new ModelAndView("login/login");
@@ -85,14 +87,16 @@ public class LoginController {
 	}
 	
 	@GetMapping("signup")
-	public String signUpPage(ModelMap model) {
+	public String signUpPage(ModelMap model, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "DENY");
 		UserModel user = new UserModel();
 		model.addAttribute("user", user);
 		model.addAttribute("action", "signup");
 		return "login/login";
 	}
 	@PostMapping("signup")
-	public ModelAndView signUp(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result) {
+	public ModelAndView signUp(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "DENY");
 		String message="";
 		
 		user.setEmail(user.getEmail().trim());
@@ -104,7 +108,12 @@ public class LoginController {
 		user.setPassword2(user.getPassword2().trim());
 		user.setRoles("user");
 		
-		if(!user.getPassword().equals(user.getPassword2())) {
+		String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+		
+		if(!validatePassword(user.getPassword()).equals("")) {
+			message = validatePassword(user.getPassword());
+		}
+		else if(!BCrypt.checkpw(user.getPassword2(), hashedPassword)) {
 			System.err.println(!user.getPassword().toString().equals(user.getPassword2().toString()));
 			message = "mật khẩu nhập lại không chính xác";
 		}
@@ -139,9 +148,48 @@ public class LoginController {
 	}
 	
 	@GetMapping("logout")
-	public String logout(ModelMap model, HttpSession session) {
+	public String logout(ModelMap model, HttpSession session, HttpServletResponse response) {
 		session.invalidate();
+		Cookie cookie = new Cookie("cookieName", "");
+		cookie.setMaxAge(0);
+		response.addCookie(cookie);
 		return "redirect:/account/login";
+	}
+	
+	public String validatePassword(String password) {
+	    String message = "";
+
+	    // Kiểm tra độ dài mật khẩu
+	    if (password.length() < 8) {
+	        message += "Mật khẩu phải có ít nhất 8 kí tự.\n";
+	    }
+
+	    // Kiểm tra chữ hoa
+	    if (!password.matches(".*[A-Z].*")) {
+	        message += "Mật khẩu phải chứa ít nhất một chữ hoa.\n";
+	    }
+
+	    // Kiểm tra chữ thường
+	    if (!password.matches(".*[a-z].*")) {
+	        message += "Mật khẩu phải chứa ít nhất một chữ thường.\n";
+	    }
+
+	    // Kiểm tra số
+	    if (!password.matches(".*\\d.*")) {
+	        message += "Mật khẩu phải chứa ít nhất một số.\n";
+	    }
+
+	    // Kiểm tra kí tự đặc biệt
+	    if (!password.matches(".*[@#$%^&+=].*")) {
+	        message += "Mật khẩu phải chứa ít nhất một kí tự đặc biệt (@, #, $, %, ^, &, +, =).\n";
+	    }
+
+	    // Kiểm tra thông báo
+	    if (message.isEmpty()) {
+	        message = "Mật khẩu hợp lệ.";
+	    }
+
+	    return message;
 	}
 	
 }
