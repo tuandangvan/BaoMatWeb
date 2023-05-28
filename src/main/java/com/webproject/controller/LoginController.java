@@ -184,10 +184,6 @@ public class LoginController {
 	        message += "Mật khẩu phải chứa ít nhất một kí tự đặc biệt (@, #, $, %, ^, &, +, =).\n";
 	    }
 
-	    // Kiểm tra thông báo
-	    if (message.isEmpty()) {
-	        message = "Mật khẩu hợp lệ.";
-	    }
 
 	    return message;
 	}
