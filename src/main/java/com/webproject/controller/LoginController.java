@@ -1,6 +1,7 @@
 package com.webproject.controller;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -40,7 +41,7 @@ public class LoginController {
 		return "login/login";
 	}
 	@PostMapping("login")
-	public ModelAndView login(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result, HttpSession session, HttpServletResponse response) throws JSONException
+	public ModelAndView login(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result, HttpServletRequest request, HttpSession session, HttpServletResponse response) throws JSONException
 	{	
 		response.setHeader("X-Frame-Options", "DENY");
 		String message = "";
@@ -60,16 +61,26 @@ public class LoginController {
 			message = "không tìm thấy tài khoản";
 		}
 		else if(BCrypt.checkpw(user.getPassword(), entity.getHashedPassword())) {
-			
-			// Tạo cookie
-			Cookie cookie = new Cookie("cookieName", "cookieValue");
-			cookie.setSecure(true); // Đảm bảo chỉ gửi qua kết nối HTTPS
-			cookie.setHttpOnly(true); // Chỉ cho phép truy cập qua HTTP
+			Cookie[] cookies = request.getCookies();
+			if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("JSESSIONID".equals(cookie.getName())) {
 
-			// Thiết lập thuộc tính SameSite bằng cách thiết lập tiêu đề Set-Cookie thủ công
-			String sameSiteAttribute = "SameSite=Strict";
-			String cookieWithSameSite = cookie.getName() + "=" + cookie.getValue() + "; " + sameSiteAttribute;
-			response.setHeader("Set-Cookie", cookieWithSameSite);
+                        // Set the SameSite attribute
+                        cookie.setSecure(true); // Only send the cookie over a secure channel (HTTPS)
+                        cookie.setHttpOnly(true);
+            
+            			// Thiết lập thuộc tính SameSite bằng cách thiết lập tiêu đề Set-Cookie thủ công
+            			String sameSiteAttribute = "SameSite=Strict";
+            			String cookieWithSameSite = cookie.getName() + "=" + cookie.getValue() + "; " + sameSiteAttribute;
+            			response.setHeader("Set-Cookies", cookieWithSameSite);
+                        cookie.setPath("/");
+                        response.addCookie(cookie);
+                        
+                        break;
+                    }
+                }
+            }
 			
 			session.setAttribute("user", entity);
 			
@@ -150,9 +161,9 @@ public class LoginController {
 	@GetMapping("logout")
 	public String logout(ModelMap model, HttpSession session, HttpServletResponse response) {
 		session.invalidate();
-		Cookie cookie = new Cookie("cookieName", "");
-		cookie.setMaxAge(0);
-		response.addCookie(cookie);
+//		Cookie cookie = new Cookie("cookieName", "");
+//		cookie.setMaxAge(0);
+//		response.addCookie(cookie);
 		return "redirect:/account/login";
 	}
 	
