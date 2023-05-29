@@ -12,6 +12,11 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -31,9 +36,15 @@ public class LoginController {
 	@Autowired
 	UserService userService;
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private AuthenticationManager authenticationManager;
+
 	@GetMapping("login")
 	public String loginPage(ModelMap model, HttpServletResponse response, HttpSession session) {
-//		response.setHeader("X-Frame-Options", "DENY");
+		response.setHeader("X-Frame-Options", "DENY");
 		// Gửi token được tạo ngẫu nhiên lên session
 		String csrfToken = UUID.randomUUID().toString();
 		session.setAttribute("csrfToken", csrfToken);
@@ -47,84 +58,87 @@ public class LoginController {
 	@PostMapping("login")
 	public ModelAndView login(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result,
 			HttpServletRequest request, HttpSession session, HttpServletResponse response) throws JSONException {
-//		response.setHeader("X-Frame-Options", "DENY");
+		response.setHeader("X-Frame-Options", "DENY");
+		if(user.getEmail() == null || user.getFirstName() == null || user.getLastName() == null 
+				|| user.getIdCard() == null || user.getPhone() == null || user.getPassword() == null 
+				|| user.getPassword2() == null || user.getRoles() == null) {
+			model.addAttribute("messageError", "input không hợp lệ");
+			model.addAttribute("action", "signup");
+			return new ModelAndView("login/login");
+		}
+		
+		String message = "";
+		if (result.hasErrors()) {
+			return new ModelAndView("login/login");
+		}
 
-		String csrfToken = (String) login(request);
-		String storedToken = (String) session.getAttribute("csrfToken");
+		if (user.getEmail() == null || user.getPassword() == null) {
+			model.addAttribute("messageError", "input không hợp lệ");
+			return new ModelAndView("login/login");
+		}
+		user.setEmail(user.getEmail().trim());
+		user.setPassword(user.getPassword().trim());
+		if (user.getEmail() == "" || user.getPassword() == "") {
+			model.addAttribute("user", user);
+			model.addAttribute("messageError", "dữ liệu nhập vào không được để trống!");
+			return new ModelAndView("login/login");
+		}
+		User entity = userService.findByEmail(user.getEmail());
 
-		if (csrfToken == null || !csrfToken.equals(storedToken)) {
-			// Thông báo không xác thực
-			String message = "Không xác thực được người dùng";
-			model.addAttribute("messageError", message);
+		if (entity == null) {
+			message = "không tìm thấy tài khoản";
+		} else if (BCrypt.checkpw(user.getPassword(), entity.getHashedPassword())) {
+			UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getEmail(),
+					user.getPassword());
+			Authentication authentication = authenticationManager.authenticate(token);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			Cookie[] cookies = request.getCookies();
+			if (cookies != null) {
+				for (Cookie cookie : cookies) {
+					if ("JSESSIONID".equals(cookie.getName())) {
 
-		} else {
-			String message = "";
-			if (result.hasErrors()) {
-				return new ModelAndView("login/login");
-			}
+						// Set the SameSite attribute
+						cookie.setSecure(true); // Only send the cookie over a secure channel (HTTPS)
+						cookie.setHttpOnly(true);
 
-			if (user.getEmail() == null || user.getPassword() == null) {
-				model.addAttribute("messageError", "input không hợp lệ");
-				return new ModelAndView("login/login");
-			}
-			user.setEmail(user.getEmail().trim());
-			user.setPassword(user.getPassword().trim());
-			if (user.getEmail() == "" || user.getPassword() == "") {
-				model.addAttribute("user", user);
-				model.addAttribute("messageError", "dữ liệu nhập vào không được để trống!");
-				return new ModelAndView("login/login");
-			}
-			User entity = userService.findByEmail(user.getEmail());
+						// Thiết lập thuộc tính SameSite bằng cách thiết lập tiêu đề Set-Cookie thủ công
+						String sameSiteAttribute = "SameSite=Strict";
+						String cookieWithSameSite = cookie.getName() + "=" + cookie.getValue() + "; "
+								+ sameSiteAttribute;
+						response.setHeader("Set-Cookies", cookieWithSameSite);
+						cookie.setPath("/");
+						response.addCookie(cookie);
 
-			if (entity == null) {
-				message = "không tìm thấy tài khoản";
-			} else if (BCrypt.checkpw(user.getPassword(), entity.getHashedPassword())) {
-				Cookie[] cookies = request.getCookies();
-				if (cookies != null) {
-					for (Cookie cookie : cookies) {
-						if ("JSESSIONID".equals(cookie.getName())) {
-
-							// Set the SameSite attribute
-							cookie.setSecure(true); // Only send the cookie over a secure channel (HTTPS)
-							cookie.setHttpOnly(true);
-
-							// Thiết lập thuộc tính SameSite bằng cách thiết lập tiêu đề Set-Cookie thủ công
-							String sameSiteAttribute = "SameSite=Strict";
-							String cookieWithSameSite = cookie.getName() + "=" + cookie.getValue() + "; "
-									+ sameSiteAttribute;
-							response.setHeader("Set-Cookies", cookieWithSameSite);
-							cookie.setPath("/");
-							response.addCookie(cookie);
-
-							break;
-						}
+						break;
 					}
 				}
-
-				session.setAttribute("user", entity);
-
-				if (entity.getRoles().equals("admin")) {
-					return new ModelAndView("redirect:/admin");
-				}
-				return new ModelAndView("redirect:/");
-			} else {
-				message = "Mật khẩu không chính xác";
 			}
-			model.addAttribute("user", user);
-			model.addAttribute("messageError", message);
+
+			session.setAttribute("user", entity);
+
+			if (entity.getRoles().equals("admin")) {
+				return new ModelAndView("redirect:/admin");
+			}
+			if (authentication.isAuthenticated())
+				return new ModelAndView("redirect:/");
+			return new ModelAndView("login/login");
+		} else {
+			message = "Mật khẩu không chính xác";
 		}
+		model.addAttribute("user", user);
+		model.addAttribute("messageError", message);
 		return new ModelAndView("login/login");
 	}
-	
+
 	@RequestMapping("/login")
 	public String login(HttpServletRequest request) {
-	    String inputValue = request.getParameter("csrfToken");
-	    return inputValue;
+		String inputValue = request.getParameter("csrfToken");
+		return inputValue;
 	}
 
 	@GetMapping("signup")
 	public String signUpPage(ModelMap model, HttpServletResponse response, HttpSession session) {
-//		response.setHeader("X-Frame-Options", "DENY");
+		response.setHeader("X-Frame-Options", "DENY");
 		// Gửi token được tạo ngẫu nhiên lên session
 		String csrfToken = UUID.randomUUID().toString();
 		session.setAttribute("csrfToken", csrfToken);
@@ -135,11 +149,12 @@ public class LoginController {
 		return "login/login";
 	}
 
+
 	@PostMapping("signup")
 	public ModelAndView signUp(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result,
-			HttpServletResponse response, HttpSession session, HttpServletRequest request) {
+			HttpServletResponse response, HttpServletRequest request, HttpSession session) {
 
-//		response.setHeader("X-Frame-Options", "DENY");
+		response.setHeader("X-Frame-Options", "DENY");
 		String message = "";
 		String csrfToken = (String) signup(request);
 		String storedToken = (String) session.getAttribute("csrfToken");
@@ -150,6 +165,7 @@ public class LoginController {
 			model.addAttribute("messageError", message);
 
 		} else {
+
 			user.setEmail(user.getEmail().trim());
 			user.setFirstName(user.getFirstName().trim());
 			user.setLastName(user.getLastName().trim());
@@ -175,7 +191,7 @@ public class LoginController {
 				try {
 					User userResp = new User();
 					BeanUtils.copyProperties(user, userResp);
-					userResp.setHashedPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+					userResp.setHashedPassword(passwordEncoder.encode(user.getPassword()));
 					userService.save(userResp);
 					model.addAttribute("messageSuccess", "Đăng ký thành công vui lòng trở lại đăng nhập");
 					model.addAttribute("action", "signup");
@@ -184,20 +200,19 @@ public class LoginController {
 				} catch (Exception e) {
 
 				}
-
+				model.addAttribute("user", user);
+				model.addAttribute("messageError", message);
+				model.addAttribute("action", "signup");
 			}
-			model.addAttribute("user", user);
-			model.addAttribute("messageError", message);
-			model.addAttribute("action", "signup");
 		}
 		return new ModelAndView("login/login");
 
 	}
-	
+
 	@RequestMapping("signup")
 	public String signup(HttpServletRequest request) {
-	    String inputValue = request.getParameter("csrfToken");
-	    return inputValue;
+		String inputValue = request.getParameter("csrfToken");
+		return inputValue;
 	}
 
 	@GetMapping("logout")

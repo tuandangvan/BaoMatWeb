@@ -4,7 +4,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<<<<<<< HEAD
+<meta http-equiv="Content-Security-Policy" content="iframe-ancestors 'none';">
+=======
 <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self';">
+>>>>>>> aea1e41908be02f090997edcefe795e0666512a1
 
 <meta charset="UTF-8" />
 <title>SUNNY | Trang quản trị</title>

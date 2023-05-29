@@ -34,6 +34,7 @@ import com.webproject.service.OrderService;
 import com.webproject.service.ProductService;
 import com.webproject.service.StorageService;
 import com.webproject.service.StoreService;
+import com.webproject.service.UserService;
 
 @Controller
 @RequestMapping("vendor/store")
@@ -52,6 +53,9 @@ public class StoreController {
 
 	@Autowired
 	private OrderItemService orderItemService;
+	
+	@Autowired 
+	private UserService userService;
 
 	@Autowired
 	HttpSession session;
@@ -145,8 +149,11 @@ public class StoreController {
 		if (result.hasErrors()) {
 			return "vendor/store/editStore";
 		}
+		
+		User user = (User) session.getAttribute("user");
+		Store storeEntity = storeService.findByOwnerId(user.get_id());
 
-		store.set_id(id);
+		store.set_id(storeEntity.get_id());
 
 		if (!avatarFile.isEmpty()) {
 			// if (false) {
