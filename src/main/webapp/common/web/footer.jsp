@@ -14,7 +14,7 @@
 	                <h5>About</h5>
 	                <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
 	                <p class="mb-0">
-	                    Đồ án môn học lập trình web
+	                    Đồ án môn học Bảo mật web được phát triển môn học lập trình web
 	                </p>
 	            </div>
 	
@@ -23,19 +23,16 @@
 	                <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
 	                <ul class="list-unstyled">
 	                    <li>Huỳnh Tấn Khôi</a></li>
-	                    <li>Lý Thế Luân</a></li>
-	                    <li>Nguyễn Công Phát</a></li>
+	                    <li>Đặng Văn Tuấn</a></li>
+	                    <li>Phạm Nhật Minh</a></li>
+	                    <li>Nguyễn Như Tú</a></li>
 	                    
 	                </ul>
 	            </div>
 	
 	
 	           
-	            <div class="col-12 copyright mt-3">
-	                <p class="float-left">
-	                    <a href="#">Back to top</a>
-	                </p>
-				</div>
+
 	        </div>
 	    </div>
 	</footer>
