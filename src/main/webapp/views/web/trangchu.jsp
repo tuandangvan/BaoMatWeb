@@ -7,7 +7,6 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="X-Frame-Options" content="deny">
 <title>LTWEB</title>
 <link rel='stylesheet' href="/css/web/product.css">
 </head>
@@ -60,6 +59,6 @@
 </body>
 
 <script type="text/javascript">
-
+	
 	</script>
 </html>

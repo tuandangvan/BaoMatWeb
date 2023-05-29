@@ -122,7 +122,7 @@
 
 				<!-- script for action in page -->
 				<script src="/views/admin/js/page.js">
-					>
+			
 				</script>
 </body>
 </html>

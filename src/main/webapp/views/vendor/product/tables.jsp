@@ -13,6 +13,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
+
 <title>SB Vendor 2 - Product</title>
 
 <!-- Custom fonts for this template -->

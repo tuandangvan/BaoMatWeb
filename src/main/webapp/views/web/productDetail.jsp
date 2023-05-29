@@ -78,15 +78,5 @@
     </div>
 	
 <%@ include file="/common/web/footer.jsp"%>
-<script type="text/javascript">
-	/* $(document).on('click', '.small-img', function(){
-		let id = $(this).data('target')
-		$('.tab-pane').removeClass("active");
-		$('.small-img').removeClass("active");
-		$('#' + id).addClass("active");
-		$(this).addClass("active");
-		
-	}) */
-</script>
 </body>
 </html>

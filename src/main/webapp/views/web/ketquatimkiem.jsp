@@ -101,10 +101,6 @@
 </div>
 </c:if>
 
-
-
-
-
 	<%@ include file="/common/web/footer.jsp"%>
 </body>
 </html>

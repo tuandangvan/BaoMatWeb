@@ -61,6 +61,9 @@
 				
 				
 			</div>
+			
+			<!--  -->
+			<input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
 		</div>
 	</div>
 	

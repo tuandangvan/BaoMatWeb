@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.webproject.service.impl.UserDetailsServiceImpl;
@@ -39,7 +40,13 @@ class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.csrf().disable();
-        http.headers().disable();
+        http.headers().referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.SAME_ORIGIN).and()
+        .frameOptions().sameOrigin().and()
+        .headers().defaultsDisabled()
+        .contentTypeOptions().and()
+        .httpStrictTransportSecurity()
+        .includeSubDomains(true)
+        .maxAgeInSeconds(31536000);
         http.authorizeRequests()
         		.antMatchers("/cart/**").hasAnyRole("USER", "ADMIN")
         		.antMatchers("/account/profile/**").hasAnyRole("USER", "ADMIN")

@@ -5,6 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self';">
 <title>Insert title here</title>
 
 <link rel='stylesheet' href="/css/web/product.css">
@@ -100,7 +101,12 @@
     </div>
 </div>
 </c:if>
-
+<script type="text/javascript">
+if(top.location!=self.location) {
+	  parent.location = self.location;
+	
+	}
+	</script>
 
 
 
