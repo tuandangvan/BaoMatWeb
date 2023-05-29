@@ -3,8 +3,9 @@ package com.webproject.controller;
 import java.lang.reflect.Field;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -39,7 +40,7 @@ public class LoginController {
 		return "login/login";
 	}
 	@PostMapping("login")
-	public ModelAndView login(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result, HttpSession session, HttpServletResponse response) throws JSONException
+	public ModelAndView login(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result, HttpServletRequest request, HttpSession session, HttpServletResponse response) throws JSONException
 	{	
 		response.setHeader("X-Frame-Options", "DENY");
 		String message = "";
@@ -64,16 +65,26 @@ public class LoginController {
 			message = "không tìm thấy tài khoản";
 		}
 		else if(BCrypt.checkpw(user.getPassword(), entity.getHashedPassword())) {
-			
-			// Tạo cookie
-			Cookie cookie = new Cookie("cookieName", "cookieValue");
-			cookie.setSecure(true); // Đảm bảo chỉ gửi qua kết nối HTTPS
-			cookie.setHttpOnly(true); // Chỉ cho phép truy cập qua HTTP
+			Cookie[] cookies = request.getCookies();
+			if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("JSESSIONID".equals(cookie.getName())) {
 
-			// Thiết lập thuộc tính SameSite bằng cách thiết lập tiêu đề Set-Cookie thủ công
-			String sameSiteAttribute = "SameSite=Strict";
-			String cookieWithSameSite = cookie.getName() + "=" + cookie.getValue() + "; " + sameSiteAttribute;
-			response.setHeader("Set-Cookie", cookieWithSameSite);
+                        // Set the SameSite attribute
+                        cookie.setSecure(true); // Only send the cookie over a secure channel (HTTPS)
+                        cookie.setHttpOnly(true);
+            
+            			// Thiết lập thuộc tính SameSite bằng cách thiết lập tiêu đề Set-Cookie thủ công
+            			String sameSiteAttribute = "SameSite=Strict";
+            			String cookieWithSameSite = cookie.getName() + "=" + cookie.getValue() + "; " + sameSiteAttribute;
+            			response.setHeader("Set-Cookies", cookieWithSameSite);
+                        cookie.setPath("/");
+                        response.addCookie(cookie);
+                        
+                        break;
+                    }
+                }
+            }
 			
 			session.setAttribute("user", entity);
 			
@@ -100,21 +111,6 @@ public class LoginController {
 	}
 	@PostMapping("signup")
 	public ModelAndView signUp(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result, HttpServletResponse response) {
-		Field[] fields = user.getClass().getDeclaredFields();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            try {
-                Object object = field.get(user);
-                if(object == null)
-                {
-                	model.addAttribute("messageError", "input không hợp lệ");
-            		model.addAttribute("action", "signup");	
-                	return new ModelAndView("login/login");
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
 		
 		response.setHeader("X-Frame-Options", "DENY");
 		String message="";
@@ -170,9 +166,6 @@ public class LoginController {
 	@GetMapping("logout")
 	public String logout(ModelMap model, HttpSession session, HttpServletResponse response) {
 		session.invalidate();
-		Cookie cookie = new Cookie("cookieName", "");
-		cookie.setMaxAge(0);
-		response.addCookie(cookie);
 		return "redirect:/account/login";
 	}
 	
@@ -203,8 +196,6 @@ public class LoginController {
 	    if (!password.matches(".*[@#$%^&+=].*")) {
 	        message += "Mật khẩu phải chứa ít nhất một kí tự đặc biệt (@, #, $, %, ^, &, +, =).\n";
 	    }
-
-
 	    return message;
 	}
 	

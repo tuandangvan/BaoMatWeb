@@ -48,7 +48,7 @@
 	
 	        <div class="collapse navbar-collapse justify-content-end" id="navbars">
 	        
-	        	<form class="form-inline my-2 my-lg-0" action="/search" method="post">
+	        	<form class="form-inline my-2 my-lg-0" action="/search" method="get">
 	                <div class="input-group input-group-sm searchfield">
 	                    <input type="text" class="form-control" id="search-key" name="search-key" placeholder="Search...">
 	                    <select name="option" id="option">
@@ -57,11 +57,13 @@
 						  	<!-- <option value="store">Cửa hàng</option> -->
 						</select>
 	                    <div class="input-group-append">
-	                        <button type="button" class="btn btn-secondary btn-number btn-search">
+	                        <button type="submit" class="btn btn-secondary btn-number btn-search">
 	                            <i class="fa fa-search"></i>
 	                        </button>
 	                    </div>
 	                </div>
+	                <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
+	              
 	                
 	            </form>
 	        

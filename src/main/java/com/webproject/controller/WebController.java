@@ -91,7 +91,7 @@ public class WebController{
 	
 	@GetMapping("store/{id}")
 	public String getMethodName(Model model, @PathVariable Long id, HttpServletResponse response) {
-		response.setHeader("X-Frame-Options", "DENY");
+//		response.setHeader("X-Frame-Options", "DENY");
 		Optional<Store> opt = storeService.findById(id);
 		List<Product> list = productService.findAllByStoreId(opt.get().get_id());
 		model.addAttribute("store", opt.get());
@@ -99,7 +99,7 @@ public class WebController{
 		return "vendor/InfoStore";
 	}
 	
-	@PostMapping("search")
+	@GetMapping("search")
 	public String search(Model model, HttpServletRequest req, HttpServletResponse response) {
 		response.setHeader("X-Frame-Options", "DENY");
 		String searchKey = req.getParameter("search-key");
@@ -128,7 +128,7 @@ public class WebController{
 	
 	@GetMapping("/product/{id}")
 	public String productDetail(ModelMap model,@PathVariable Long id, HttpSession session, HttpServletResponse response) {
-		response.setHeader("X-Frame-Options", "DENY");
+//		response.setHeader("X-Frame-Options", "DENY");
 		User user = (User) session.getAttribute("user");
 		Product product = productService.findById(id).get();
 		
