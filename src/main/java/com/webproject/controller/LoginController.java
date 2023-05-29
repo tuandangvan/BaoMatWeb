@@ -8,6 +8,11 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -26,6 +31,12 @@ import com.webproject.service.UserService;
 public class LoginController {
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+    private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private AuthenticationManager authenticationManager;
 	
 	@GetMapping("login")
 	public String loginPage(ModelMap model) {
@@ -54,12 +65,16 @@ public class LoginController {
 			message = "không tìm thấy tài khoản";
 		}
 		else if(BCrypt.checkpw(user.getPassword(), entity.getHashedPassword())) {
-			
+			UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
+		    Authentication authentication = authenticationManager.authenticate(token);
+		    SecurityContextHolder.getContext().setAuthentication(authentication);
 			session.setAttribute("user", entity);
 			if(entity.getRoles().equals("admin") ) {
 				return new ModelAndView("redirect:/admin");
 			}
-			return new ModelAndView("redirect:/");
+			if(authentication.isAuthenticated())
+				return new ModelAndView("redirect:/");
+			return new ModelAndView("login/login");
 		}
 		else {
 			message = "Mật khẩu không chính xác";
@@ -104,7 +119,7 @@ public class LoginController {
 			try {
 				User userResp = new User();
 				BeanUtils.copyProperties(user, userResp);
-				userResp.setHashedPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+				userResp.setHashedPassword(passwordEncoder.encode(user.getPassword()));
 				userService.save(userResp);
 				model.addAttribute("messageSuccess", "Đăng ký thành công vui lòng trở lại đăng nhập");
 				model.addAttribute("action", "signup");

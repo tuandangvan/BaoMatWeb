@@ -3,9 +3,11 @@
     
     <%@ include file="/common/taglib.jsp"%>
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="X-Frame-Options" content="deny">
 <title>LTWEB</title>
 <link rel='stylesheet' href="/css/web/product.css">
 </head>
@@ -56,4 +58,8 @@
 </div>
 	<%@ include file="/common/web/footer.jsp"%>
 </body>
+
+<script type="text/javascript">
+
+	</script>
 </html>

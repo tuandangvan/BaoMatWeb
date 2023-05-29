@@ -4,6 +4,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta http-equiv="Content-Security-Policy" content="iframe-ancestors 'none';">
+
 <meta charset="UTF-8" />
 <title>SUNNY | Trang quản trị</title>
 
@@ -274,6 +276,8 @@
 		<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
 		<!-- script for action in page -->
-		<script src="/views/admin/js/page.js">></script>
+		<script src="/views/admin/js/page.js">
+		
+		</script>
 </body>
 </html>
