@@ -13,7 +13,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 </head>
 <body>
-	
+
 	<div id="alertMessage">
 		<c:if test="${messageError !=null}">
 			<div class="alert">
@@ -41,8 +41,11 @@
         <div id="login-tab-content" class="active">
           <form class="login-form" action="/account/login" method="post">
             <input type="email" class="input" id="email" name="email"  value="${user.email}" required placeholder="Email">
+            <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
             <input type="password" class="input" id="password" name="password" value="${user.password}"  autocomplete=off required placeholder="Mật khẩu">
             <input type="submit" class="button" value="Đăng nhập">
+            
+            
           </form><!--.login-form-->
           <div class="help-text">
             <p><a href="#">Quên mật khẩu?</a></p>
@@ -57,21 +60,18 @@
             <input type="text" class="input" id="idCard" name="idCard" value="${user.idCard}" autocomplete="off" required placeholder="Số CMND">
             <input type="text" class="input" id="phone" name="phone" value="${user.phone}" autocomplete="off" required placeholder="Số điện thoại">
            <!--  <input type="text" class="input" id="phone" name="" autocomplete="off" placeholder="Địa chỉ"> -->
+           <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
             <input type="password" class="input" id="password" name="password" value="${user.password}" required autocomplete=off placeholder="Mật khẩu">
             <input type="password" class="input" id="password2" name="password2" value="${user.password2}" required autocomplete="off" placeholder="Nhập lại mật khẩu">
             <input type="submit" class="button" value="Đăng Ký">
+            
           </form><!--.login-form-->
         </div><!--.signup-tab-content-->
         
       </div><!--.tabs-content-->
     </div><!--.form-wrap-->
      <script type="text/javascript" nonce="jquery">
-     
-     
-     if(top.location!=self.location) {
- 	    parent.location = self.location;
 
- 	}
 
      
      var close = document.getElementsByClassName("closebtn");

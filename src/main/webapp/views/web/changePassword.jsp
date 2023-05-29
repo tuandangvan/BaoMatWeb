@@ -53,9 +53,11 @@
 		                <div class="form__row">
 		                    <label class="form__label" for="password2">Nhập Lại Mật Khẩu:</label>
 		                    <input class="form__input" type="password" name="password2" id="password2" required>
+		                    <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
 		                </div>
 		                
 		               <button class="save-info">Xác Nhận</button>
+		              
 		            </form>
 		        </div>
 				
@@ -63,7 +65,7 @@
 			</div>
 			
 			<!--  -->
-			<input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}">
+
 		</div>
 	</div>
 	

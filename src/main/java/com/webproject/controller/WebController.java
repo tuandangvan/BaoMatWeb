@@ -2,13 +2,12 @@ package com.webproject.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -16,11 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -28,7 +24,6 @@ import com.webproject.entity.Category;
 import com.webproject.entity.Product;
 import com.webproject.entity.Store;
 import com.webproject.entity.User;
-
 import com.webproject.service.CategoryService;
 import com.webproject.service.ProductService;
 import com.webproject.service.StorageService;
@@ -36,10 +31,10 @@ import com.webproject.service.StoreService;
 
 @Controller
 @RequestMapping("")
-public class WebController{
+public class WebController {
 	@Autowired
 	private StoreService storeService;
-	
+
 	@Autowired
 	private CategoryService cateService;
 
@@ -57,38 +52,54 @@ public class WebController{
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"" + file.getFilename() + "\"")
 				.body(file);
 	}
+
 	@GetMapping("")
 	public String homePage(ModelMap model, HttpSession session, HttpServletResponse response) {
-		response.setHeader("X-Frame-Options", "DENY");
+		// Gửi token được tạo ngẫu nhiên lên session
+		String csrfToken = UUID.randomUUID().toString();
+		session.setAttribute("csrfToken", csrfToken);
+
+//		response.setHeader("X-Frame-Options", "DENY");
 
 		User user = (User) session.getAttribute("user");
 		List<Product> list = productService.findLastestProduct();
-		
+
 		model.addAttribute("page", "home");
 		model.addAttribute("productlist", list);
 		return "web/trangchu";
 	}
-	
+
 	@GetMapping("category-list")
 	public String categoryPage(ModelMap model, HttpSession session, HttpServletResponse response) {
-		response.setHeader("X-Frame-Options", "DENY");
-		User user = (User) session.getAttribute("user");
-		List<Category> categories = cateService.findAll();
-		model.addAttribute("categories", categories);
-		model.addAttribute("page", "category");
+
+//		response.setHeader("X-Frame-Options", "DENY");
+		String csrfToken = (String) model.getAttribute("csrfToken");
+		String storedToken = (String) session.getAttribute("csrfToken");
+
+		if (csrfToken == null || !csrfToken.equals(storedToken)) {
+			// Thông báo không xác thực
+			String message = "Không xác thực được người dùng";
+			model.addAttribute("messageError", message);
+
+		} else {
+			User user = (User) session.getAttribute("user");
+			List<Category> categories = cateService.findAll();
+			model.addAttribute("categories", categories);
+			model.addAttribute("page", "category");
+		}
 		return "web/CategoryList";
 	}
-	
+
 	@GetMapping("category-list/{categoryslug}")
-	public String productByCate(ModelMap model,@PathVariable String categoryslug, HttpSession session) {
+	public String productByCate(ModelMap model, @PathVariable String categoryslug, HttpSession session) {
 		Category cate = cateService.findBySlug(categoryslug);
 		List<Product> list = productService.findAllByCategoryId(cate.get_id());
-		model.addAttribute("cate",cate);
-		model.addAttribute("list",list);
-		
+		model.addAttribute("cate", cate);
+		model.addAttribute("list", list);
+
 		return "web/ketquatimkiem";
 	}
-	
+
 	@GetMapping("store/{id}")
 	public String getMethodName(Model model, @PathVariable Long id, HttpServletResponse response) {
 //		response.setHeader("X-Frame-Options", "DENY");
@@ -98,42 +109,43 @@ public class WebController{
 		model.addAttribute("listProducts", list);
 		return "vendor/InfoStore";
 	}
-	
+
 	@GetMapping("search")
-	public String search(Model model, HttpServletRequest req, HttpServletResponse response) {
-		response.setHeader("X-Frame-Options", "DENY");
+	public String search(Model model, HttpServletRequest req, HttpServletResponse response, HttpSession session) {
+
+//		response.setHeader("X-Frame-Options", "DENY");
 		String searchKey = req.getParameter("search-key");
 		String option = req.getParameter("option");
-		
-		if(searchKey == null || option == null) {
+
+		if (searchKey == null || option == null) {
 			return "web/ketquatimkiem";
 		}
-		
-		if(option.equals("product")) {
-			List<Product> products = productService.searchProductByName("%"+searchKey+"%");
-			if(products.size() > 0)
-				model.addAttribute("list",products);
+
+		if (option.equals("product")) {
+			List<Product> products = productService.searchProductByName("%" + searchKey + "%");
+			if (products.size() > 0)
+				model.addAttribute("list", products);
+		} else if (option.equals("category")) {
+			List<Category> categories = cateService.searchCategoryByName("%" + searchKey + "%");
+			if (categories.size() > 0)
+				model.addAttribute("categories", categories);
+		} else if (option.equals("store")) {
 		}
-		else if(option.equals("category")) {
-			List<Category> categories = cateService.searchCategoryByName("%"+searchKey+"%");
-			if(categories.size() > 0)
-				model.addAttribute("categories",categories);
-		}
-		else if(option.equals("store")) {
-		}
-		model.addAttribute("option",option);
-		model.addAttribute("search-key",searchKey);
+		model.addAttribute("option", option);
+		model.addAttribute("search-key", searchKey);
+
 		return "web/ketquatimkiem";
 	}
-	
+
 	@GetMapping("/product/{id}")
-	public String productDetail(ModelMap model,@PathVariable Long id, HttpSession session, HttpServletResponse response) {
+	public String productDetail(ModelMap model, @PathVariable Long id, HttpSession session,
+			HttpServletResponse response) {
 //		response.setHeader("X-Frame-Options", "DENY");
 		User user = (User) session.getAttribute("user");
 		Product product = productService.findById(id).get();
-		
-		model.addAttribute("product",product);
+
+		model.addAttribute("product", product);
 		return "web/productDetail";
 	}
-	
+
 }
