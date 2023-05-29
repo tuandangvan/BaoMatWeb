@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -80,8 +81,7 @@ public class ProfileController {
 		String csrfToken = UUID.randomUUID().toString();
 		session.setAttribute("csrfToken", csrfToken);
 
-		
-		
+
 		User user = (User) session.getAttribute("user");
 		if(user == null)
 			return "redirect:/account/login";
@@ -90,8 +90,8 @@ public class ProfileController {
 		return "web/changePassword";
 	}
 	@PostMapping("/change-password")
-	public String changePassword(ModelMap model,@Valid @ModelAttribute("user") UserModel usermodel, BindingResult result, HttpSession session) {
-		String csrfToken = (String) model.getAttribute("csrfToken");
+	public String changePassword(ModelMap model,@Valid @ModelAttribute("user") UserModel usermodel, BindingResult result, HttpSession session, HttpServletRequest request) {
+		String csrfToken = changePassword(request);
 		String storedToken = (String) session.getAttribute("csrfToken");
 		 
 		if (csrfToken == null || !csrfToken.equals(storedToken)) {
@@ -127,6 +127,13 @@ public class ProfileController {
 		}
 		return "web/changePassword";
 	}
+	
+	@RequestMapping("/change-password")
+	public String changePassword(HttpServletRequest request) {
+	    String inputValue = request.getParameter("csrfToken");
+	    return inputValue;
+	}
+
 	
 	@GetMapping("/orders")
 	public String listorder(ModelMap model, HttpSession session) {
