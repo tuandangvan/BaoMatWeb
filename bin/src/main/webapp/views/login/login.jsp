@@ -66,8 +66,11 @@
       </div><!--.tabs-content-->
     </div><!--.form-wrap-->
      <script type="text/javascript">
+<<<<<<< HEAD
+=======
      
      
+>>>>>>> aea1e41908be02f090997edcefe795e0666512a1
      if(top.location!=self.location) {
  	    parent.location = self.location;
 

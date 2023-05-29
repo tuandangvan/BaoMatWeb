@@ -12,7 +12,11 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="">
 <meta name="author" content="">
+<<<<<<< HEAD
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
+=======
 <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self';">
+>>>>>>> aea1e41908be02f090997edcefe795e0666512a1
 
 
 <title>SB Vendor 2 - Tables</title>
