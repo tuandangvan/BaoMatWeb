@@ -6,6 +6,7 @@
 <head>
 <!-- Required meta tags -->
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'nonce-jquery' 'self' https://ajax.googleapis.com;">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- Bootstrap CSS -->
