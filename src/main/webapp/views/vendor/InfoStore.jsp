@@ -6,6 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="script-src 'nonce-jquery' 'self' https://ajax.googleapis.com;">
 <title>LTWEB</title>
 <link rel='stylesheet' href="/css/web/product.css">
 </head>

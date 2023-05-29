@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ include file="/common/taglib.jsp"%>
 <%@ page session="true"%>
+<meta http-equiv="Content-Security-Policy" content="script-src 'nonce-jquery' 'self' https://ajax.googleapis.com;">
 <div class="header">
 	<ul>
 		<li style="background-color: #4285F4; font-size: 20px;"><a
