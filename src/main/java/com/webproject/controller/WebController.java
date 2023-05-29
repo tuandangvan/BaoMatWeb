@@ -99,11 +99,15 @@ public class WebController{
 		return "vendor/InfoStore";
 	}
 	
-	@PostMapping("search")
+	@GetMapping("search")
 	public String search(Model model, HttpServletRequest req, HttpServletResponse response) {
 		response.setHeader("X-Frame-Options", "DENY");
 		String searchKey = req.getParameter("search-key");
 		String option = req.getParameter("option");
+		
+		if(searchKey == null || option == null) {
+			return "web/ketquatimkiem";
+		}
 		
 		if(option.equals("product")) {
 			List<Product> products = productService.searchProductByName("%"+searchKey+"%");
@@ -116,7 +120,6 @@ public class WebController{
 				model.addAttribute("categories",categories);
 		}
 		else if(option.equals("store")) {
-			System.err.println("s");
 		}
 		model.addAttribute("option",option);
 		model.addAttribute("search-key",searchKey);

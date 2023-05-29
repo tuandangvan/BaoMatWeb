@@ -1,17 +1,17 @@
 package com.webproject.controller;
 
+import java.lang.reflect.Field;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-
 
 import com.webproject.entity.User;
 import com.webproject.model.UserModel;
@@ -46,6 +45,11 @@ public class LoginController {
 		response.setHeader("X-Frame-Options", "DENY");
 		String message = "";
 		if(result.hasErrors()) {	
+			return new ModelAndView("login/login");
+		}
+		
+		if(user.getEmail() == null || user.getPassword() == null) {
+			model.addAttribute("messageError", "input không hợp lệ");
 			return new ModelAndView("login/login");
 		}
 		user.setEmail(user.getEmail().trim());
@@ -107,6 +111,7 @@ public class LoginController {
 	}
 	@PostMapping("signup")
 	public ModelAndView signUp(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result, HttpServletResponse response) {
+		
 		response.setHeader("X-Frame-Options", "DENY");
 		String message="";
 		
@@ -161,9 +166,6 @@ public class LoginController {
 	@GetMapping("logout")
 	public String logout(ModelMap model, HttpSession session, HttpServletResponse response) {
 		session.invalidate();
-//		Cookie cookie = new Cookie("cookieName", "");
-//		cookie.setMaxAge(0);
-//		response.addCookie(cookie);
 		return "redirect:/account/login";
 	}
 	
@@ -194,8 +196,6 @@ public class LoginController {
 	    if (!password.matches(".*[@#$%^&+=].*")) {
 	        message += "Mật khẩu phải chứa ít nhất một kí tự đặc biệt (@, #, $, %, ^, &, +, =).\n";
 	    }
-
-
 	    return message;
 	}
 	

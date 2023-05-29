@@ -18,7 +18,6 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
         if (values == null) {
             return null;
         }
-        System.err.println(values[0]);
         
         int count = values.length;
         String[] encodedValues = new String[count];
