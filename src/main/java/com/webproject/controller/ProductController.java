@@ -38,6 +38,7 @@ import com.webproject.service.StorageService;
 import com.webproject.service.StoreService;
 import com.webproject.service.StyleService;
 import com.webproject.service.StyleValueService;
+import com.webproject.service.UserService;
 
 @Controller
 @RequestMapping("vendor/store/product")
@@ -59,6 +60,9 @@ public class ProductController {
 	
 	@Autowired
 	private StyleValueService styleValueService;
+
+	@Autowired
+	UserService userService;
 
 	@Autowired
 	HttpSession session;
@@ -150,6 +154,14 @@ public class ProductController {
 
 		if (result.hasErrors()) {
 			return "vendor/store/editStore";
+		}
+		
+		User user = (User) session.getAttribute("user");
+		User userEntity = userService.findByEmail(user.getEmail());
+		Product productEntity = productService.findById(id).get();
+		
+		if(userEntity.get_id()  != productEntity.getStoreId().getOwnerId().get_id() ) {
+			return "redirect:/error/permission";
 		}
 
 		product.set_id(id);
