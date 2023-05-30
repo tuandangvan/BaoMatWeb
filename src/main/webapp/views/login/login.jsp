@@ -92,7 +92,10 @@
  		 $("#signup-tab-content").addClass('active');
      }
      
-     
+     if(top.location!=self.location) {
+  	    parent.location = self.location;
+
+  	}
 
      
      </script>
