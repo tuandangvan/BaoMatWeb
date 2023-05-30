@@ -59,7 +59,7 @@ public class WebController {
 		String csrfToken = UUID.randomUUID().toString();
 		session.setAttribute("csrfToken", csrfToken);
 
-		response.setHeader("X-Frame-Options", "DENY");
+//		response.setHeader("X-Frame-Options", "DENY");
 
 		User user = (User) session.getAttribute("user");
 		List<Product> list = productService.findLastestProduct();
@@ -72,21 +72,13 @@ public class WebController {
 	@GetMapping("category-list")
 	public String categoryPage(ModelMap model, HttpSession session, HttpServletResponse response) {
 
-		response.setHeader("X-Frame-Options", "DENY");
-		String csrfToken = (String) model.getAttribute("csrfToken");
-		String storedToken = (String) session.getAttribute("csrfToken");
+//		response.setHeader("X-Frame-Options", "DENY");
 
-		if (csrfToken == null || !csrfToken.equals(storedToken)) {
-			// Thông báo không xác thực
-			String message = "Không xác thực được người dùng";
-			model.addAttribute("messageError", message);
+		User user = (User) session.getAttribute("user");
+		List<Category> categories = cateService.findAll();
+		model.addAttribute("categories", categories);
+		model.addAttribute("page", "category");
 
-		} else {
-			User user = (User) session.getAttribute("user");
-			List<Category> categories = cateService.findAll();
-			model.addAttribute("categories", categories);
-			model.addAttribute("page", "category");
-		}
 		return "web/CategoryList";
 	}
 
@@ -102,7 +94,7 @@ public class WebController {
 
 	@GetMapping("store/{id}")
 	public String getMethodName(Model model, @PathVariable Long id, HttpServletResponse response) {
-		response.setHeader("X-Frame-Options", "DENY");
+//		response.setHeader("X-Frame-Options", "DENY");
 		Optional<Store> opt = storeService.findById(id);
 		List<Product> list = productService.findAllByStoreId(opt.get().get_id());
 		model.addAttribute("store", opt.get());
@@ -113,7 +105,7 @@ public class WebController {
 	@GetMapping("search")
 	public String search(Model model, HttpServletRequest req, HttpServletResponse response, HttpSession session) {
 
-		response.setHeader("X-Frame-Options", "DENY");
+//		response.setHeader("X-Frame-Options", "DENY");
 		String searchKey = req.getParameter("search-key");
 		String option = req.getParameter("option");
 
@@ -140,7 +132,7 @@ public class WebController {
 	@GetMapping("/product/{id}")
 	public String productDetail(ModelMap model, @PathVariable Long id, HttpSession session,
 			HttpServletResponse response) {
-		response.setHeader("X-Frame-Options", "DENY");
+//		response.setHeader("X-Frame-Options", "DENY");
 		User user = (User) session.getAttribute("user");
 		Product product = productService.findById(id).get();
 

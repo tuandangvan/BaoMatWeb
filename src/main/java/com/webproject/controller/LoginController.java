@@ -44,7 +44,7 @@ public class LoginController {
 
 	@GetMapping("login")
 	public String loginPage(ModelMap model, HttpServletResponse response, HttpSession session) {
-		response.setHeader("X-Frame-Options", "DENY");
+//		response.setHeader("X-Frame-Options", "DENY");
 		// Gửi token được tạo ngẫu nhiên lên session
 		String csrfToken = UUID.randomUUID().toString();
 		session.setAttribute("csrfToken", csrfToken);
@@ -58,14 +58,8 @@ public class LoginController {
 	@PostMapping("login")
 	public ModelAndView login(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result,
 			HttpServletRequest request, HttpSession session, HttpServletResponse response) throws JSONException {
-		response.setHeader("X-Frame-Options", "DENY");
-		if(user.getEmail() == null || user.getFirstName() == null || user.getLastName() == null 
-				|| user.getIdCard() == null || user.getPhone() == null || user.getPassword() == null 
-				|| user.getPassword2() == null || user.getRoles() == null) {
-			model.addAttribute("messageError", "input không hợp lệ");
-			model.addAttribute("action", "signup");
-			return new ModelAndView("login/login");
-		}
+//		response.setHeader("X-Frame-Options", "DENY");
+
 		
 		String message = "";
 		if (result.hasErrors()) {
@@ -137,13 +131,17 @@ public class LoginController {
 	}
 
 	@GetMapping("signup")
-	public String signUpPage(ModelMap model, HttpServletResponse response, HttpSession session) {
-		response.setHeader("X-Frame-Options", "DENY");
+	public String signUpPage(ModelMap model,@Valid @ModelAttribute("user") UserModel user, HttpServletResponse response, HttpSession session) {
+//		response.setHeader("X-Frame-Options", "DENY");
 		// Gửi token được tạo ngẫu nhiên lên session
+		
+		
+		
 		String csrfToken = UUID.randomUUID().toString();
 		session.setAttribute("csrfToken", csrfToken);
+		
+		
 
-		UserModel user = new UserModel();
 		model.addAttribute("user", user);
 		model.addAttribute("action", "signup");
 		return "login/login";
@@ -153,8 +151,15 @@ public class LoginController {
 	@PostMapping("signup")
 	public ModelAndView signUp(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result,
 			HttpServletResponse response, HttpServletRequest request, HttpSession session) {
-
-		response.setHeader("X-Frame-Options", "DENY");
+		
+		if(user.getEmail() == null || user.getFirstName() == null || user.getLastName() == null 
+				|| user.getIdCard() == null || user.getPhone() == null || user.getPassword() == null 
+				|| user.getPassword2() == null || user.getRoles() == null) {
+			model.addAttribute("messageError", "input không hợp lệ");
+			model.addAttribute("action", "signup");
+			return new ModelAndView("login/login");
+		}
+//		response.setHeader("X-Frame-Options", "DENY");
 		String message = "";
 		String csrfToken = (String) signup(request);
 		String storedToken = (String) session.getAttribute("csrfToken");
