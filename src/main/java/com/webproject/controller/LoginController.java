@@ -44,7 +44,7 @@ public class LoginController {
 
 	@GetMapping("login")
 	public String loginPage(ModelMap model, HttpServletResponse response, HttpSession session) {
-//		response.setHeader("X-Frame-Options", "DENY");
+		response.setHeader("X-Frame-Options", "DENY");
 		// Gửi token được tạo ngẫu nhiên lên session
 		String csrfToken = UUID.randomUUID().toString();
 		session.setAttribute("csrfToken", csrfToken);
@@ -58,7 +58,7 @@ public class LoginController {
 	@PostMapping("login")
 	public ModelAndView login(ModelMap model, @Valid @ModelAttribute("user") UserModel user, BindingResult result,
 			HttpServletRequest request, HttpSession session, HttpServletResponse response) throws JSONException {
-//		response.setHeader("X-Frame-Options", "DENY");
+		response.setHeader("X-Frame-Options", "DENY");
 
 		
 		String message = "";
@@ -132,7 +132,7 @@ public class LoginController {
 
 	@GetMapping("signup")
 	public String signUpPage(ModelMap model,@Valid @ModelAttribute("user") UserModel user, HttpServletResponse response, HttpSession session) {
-//		response.setHeader("X-Frame-Options", "DENY");
+		response.setHeader("X-Frame-Options", "DENY");
 		// Gửi token được tạo ngẫu nhiên lên session
 		
 		
@@ -159,7 +159,7 @@ public class LoginController {
 			model.addAttribute("action", "signup");
 			return new ModelAndView("login/login");
 		}
-//		response.setHeader("X-Frame-Options", "DENY");
+		response.setHeader("X-Frame-Options", "DENY");
 		String message = "";
 		String csrfToken = (String) signup(request);
 		String storedToken = (String) session.getAttribute("csrfToken");

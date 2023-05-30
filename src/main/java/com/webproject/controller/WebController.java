@@ -59,7 +59,7 @@ public class WebController {
 		String csrfToken = UUID.randomUUID().toString();
 		session.setAttribute("csrfToken", csrfToken);
 
-//		response.setHeader("X-Frame-Options", "DENY");
+		response.setHeader("X-Frame-Options", "DENY");
 
 		User user = (User) session.getAttribute("user");
 		List<Product> list = productService.findLastestProduct();
@@ -72,7 +72,7 @@ public class WebController {
 	@GetMapping("category-list")
 	public String categoryPage(ModelMap model, HttpSession session, HttpServletResponse response) {
 
-//		response.setHeader("X-Frame-Options", "DENY");
+		response.setHeader("X-Frame-Options", "DENY");
 
 		User user = (User) session.getAttribute("user");
 		List<Category> categories = cateService.findAll();
@@ -94,7 +94,7 @@ public class WebController {
 
 	@GetMapping("store/{id}")
 	public String getMethodName(Model model, @PathVariable Long id, HttpServletResponse response) {
-//		response.setHeader("X-Frame-Options", "DENY");
+		response.setHeader("X-Frame-Options", "DENY");
 		Optional<Store> opt = storeService.findById(id);
 		List<Product> list = productService.findAllByStoreId(opt.get().get_id());
 		model.addAttribute("store", opt.get());
